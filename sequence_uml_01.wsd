@@ -1,30 +1,39 @@
-@startuml Test
+@startuml sequence_uml_01
+
 title: Работа с заданиями
+
 autonumber
-participant USER
-box "Приложение"
-participant FRONTEND
-participant BACKEND
+
+actor USER #Red/Yellow
+
+box "Приложение" #azure
+    participant FRONTEND #CadetBlue
+    participant BACKEND  #SteelBlue
 end box
+
 box "База"
-participant DB 
+    participant DB #yellow
 end box
-box "Авторизация"
-participant SSO
+
+box "Авторизация" #LightBlue
+    participant SSO #lime
 end box
+
 USER [#green]-> FRONTEND: Login, password
 activate USER
 activate FRONTEND
 FRONTEND [#blue]-> SSO: POST /API/AUTH
 activate SSO
 SSO -> SSO
-opt Некоректные данные
-SSO --> FRONTEND: respoonse HTTP 400 code 10000
-else Задача не найдена
-SSO --> FRONTEND: respoonse HTTP 400 code 10001
-else Задача не найдена
-SSO --> FRONTEND: respoonse HTTP 400 code 10002
+
+opt #LightPink Некоректные данные 
+    SSO --> FRONTEND: respoonse HTTP 400 code 10000
+    else Задача не найдена
+    SSO --> FRONTEND: respoonse HTTP 400 code 10001
+    else Задача не найдена
+    SSO --> FRONTEND: respoonse HTTP 400 code 10002
 end
+
 SSO [#blue]--> FRONTEND: respoonse HTTP 200 OK
 deactivate SSO
 FRONTEND [#green]--> USER: respoonse HTTP 200 OK
@@ -34,12 +43,15 @@ activate BACKEND
 BACKEND -> DB: POST /API/UPDATE
 activate DB
 DB -> DB
-opt Данные не найдены
-DB --> BACKEND:respoonse HTTP 404 code 20001
-else Аргумент отсутствует
-DB --> BACKEND:respoonse HTTP 404 code 20002
+
+opt #DeepPink Данные не найдены
+    DB --> BACKEND:respoonse HTTP 404 code 20001
+    else Аргумент отсутствует
+    DB --> BACKEND:respoonse HTTP 404 code 20002
 end
+
 DB --> BACKEND:respoonse HTTP 200 OK
 BACKEND -> BACKEND
 BACKEND --> FRONTEND:respoonse HTTP 200 OK
+
 @enduml
