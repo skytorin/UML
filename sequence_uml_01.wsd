@@ -1,0 +1,45 @@
+@startuml Test
+title: Работа с заданиями
+autonumber
+participant USER
+box "Приложение"
+participant FRONTEND
+participant BACKEND
+end box
+box "База"
+participant DB 
+end box
+box "Авторизация"
+participant SSO
+end box
+USER [#green]-> FRONTEND: Login, password
+activate USER
+activate FRONTEND
+FRONTEND [#blue]-> SSO: POST /API/AUTH
+activate SSO
+SSO -> SSO
+opt Некоректные данные
+SSO --> FRONTEND: respoonse HTTP 400 code 10000
+else Задача не найдена
+SSO --> FRONTEND: respoonse HTTP 400 code 10001
+else Задача не найдена
+SSO --> FRONTEND: respoonse HTTP 400 code 10002
+end
+SSO [#blue]--> FRONTEND: respoonse HTTP 200 OK
+deactivate SSO
+FRONTEND [#green]--> USER: respoonse HTTP 200 OK
+deactivate USER
+FRONTEND -> BACKEND: POST /API/UPDATE
+activate BACKEND
+BACKEND -> DB: POST /API/UPDATE
+activate DB
+DB -> DB
+opt Данные не найдены
+DB --> BACKEND:respoonse HTTP 404 code 20001
+else Аргумент отсутствует
+DB --> BACKEND:respoonse HTTP 404 code 20002
+end
+DB --> BACKEND:respoonse HTTP 200 OK
+BACKEND -> BACKEND
+BACKEND --> FRONTEND:respoonse HTTP 200 OK
+@enduml
